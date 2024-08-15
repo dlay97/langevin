@@ -1,0 +1,66 @@
+\documentclass[aps,mph,amsmath,amssymb,author-year]{revtex4-1}
+%reprint makes it double columned
+%author-year allows for footnotes at the bottom of columns
+%\usepackage{physforms}
+\usepackage{graphicx}
+\usepackage{bm}
+
+%Included explicitly so that Latex command recognition picks up the commands from
+%these packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{esint}
+%\usepackage{hyperref}
+
+\usepackage[english]{babel}
+\usepackage{comment}
+%\numberwithin{equation}{section}
+
+\newcommand{\pd}{\partial}
+
+\begin{document}
+
+\title{Langevin Notes}
+\author{Daniel Lay}
+
+\maketitle
+
+As a reminder, the equations we are solving are
+\begin{align}
+	\dot{p}_i&=-U_{,i}-\frac{1}{2}m^{-1}_{jk,i}p_jp_k-\gamma_{ij}m^{-1}_{jk}p_k+g_{ij}\Gamma_j(t),\\
+	\dot{q}_i&=m^{-1}_{ij}p_j,
+\end{align}
+with the relation $g_{ik}g_{jk}=T\gamma_{ij}$ from the fluctuation-dissipation theorem. The temperature $T$ depends on the excitation energy of the particle at a given time step. $\Gamma_j(t)$ is sampled at each time step from a normal distribution. As such, we can benchmark our Langevin code by comparing the average Langevin trajectory to the deterministic system of differential equations where we just neglect $\Gamma_j$.
+
+For now, this will just write out the tensor contractions we're doing, following the paper [CITE]. It will be assumed that the potential, $U$, and the mass tensor, $m$, only depend on $\vec{q}$, so that derivative notation can be suppressed.
+
+We start with definitions:
+\begin{align}
+	h_i&=-U_{,i}-\frac{1}{2}m^{-1}_{jk,i}p_jp_k-\gamma_{ij}v_j,\\
+	v_i&=m^{-1}_{ij}p_j.
+\end{align}
+Note that, in Appendix A.2 of the paper, this expansion is wrong: it replaces $p\to q$ in the second term in $h$. The second order expansion (from Appendix A.2 in the paper) is
+\begin{align}
+	\Delta p_i&=th_i+\frac{1}{2}\bigg[\frac{\pd h_i}{\pd q_j}v_j+\frac{\pd h_i}{\pd p_j}h_j\bigg]t^2+g_{ij}\Gamma_{1j}+\frac{\pd h_i}{\pd p_j}g_{jk}\Gamma_{2k}+g_{ij,k}v_k\Gamma_{3j},\\
+	\Delta q_i&=tv_i+\frac{1}{2}\bigg[\frac{\pd v_i}{\pd q_j}v_j+\frac{\pd v_i}{\pd p_j}h_j\bigg]t^2+\frac{\pd v_i}{\pd p_j}g_{jk}\Gamma_{2k},
+\end{align}
+with $\Gamma$s given by
+\begin{align}
+	\Gamma_{1j}&=\sqrt{t}\omega_{1j},\\
+	\Gamma_{2k}&=t^{3/2}\bigg[\frac{1}{2}\omega_{1k}+\frac{1}{2\sqrt{3}}\omega_{2k}\bigg],\\
+	\Gamma_{3k}&=t^{3/2}\bigg[\frac{1}{2}\omega_{1k}-\frac{1}{2\sqrt{3}}\omega_{2k}\bigg].
+\end{align}
+Both $\omega_{1j}$ and $\omega_{2k}$ are sampled from independent normal distributions, with variance $\sigma=\sqrt{2}$, at each time step.
+
+For use in writing the code, here's the tensors to construct, in the correct order:
+\begin{align}
+	v_i&=m^{-1}_{ij}p_j\\
+	h_i&=-U_{,i}-\frac{1}{2}m^{-1}_{jk,i}p_jp_k-\gamma_{ij}v_j\\
+	\frac{\pd v_i}{\pd q_j}&=m^{-1}_{ik,j}p_k \\
+	\frac{\pd v_i}{\pd p_j}&=m^{-1}_{ij} \\
+	\frac{\pd h_i}{\pd q_j}&=-U_{,ij}-\frac{1}{2}m^{-1}_{kl,ij}p_kp_l-\gamma_{ik}\frac{\pd v_k}{\pd q_j}\\
+	\frac{\pd h_i}{\pd p_j}&=-m_{jk,i}^{-1}p_k-\gamma_{ik}\frac{\pd v_k}{\pd p_j}
+\end{align}
+
+
+\end{document}

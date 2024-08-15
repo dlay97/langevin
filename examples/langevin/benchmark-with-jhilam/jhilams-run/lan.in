@@ -1,0 +1,11 @@
+252                  !A of the nucleus
+1000 0.0005 0.97     !tmax, tstep, E0
+1 0.5 2.2 0.2        !0=no friction, 1=with fric; fric-Q2020, fric-Q3030, fric-Q2030
+1000 153              !no of events for langevin, no of outer-turning pt
+100.0 400.0 1.0      !Q20: starting, end, step
+0.0 60.0 0.5         !Q30: starting, end, step 
+200.0 0.5            !starting guess for Q20, Q_N for scission condition
+0 21.00 57.0 0.05    !range of Q30 on the outer turning points: start, end, step
+125 160              !range of A for probability calculation  
+45  65               !range of Z for probability calculation  
+80  100              !range of N for N-Z correlation 	       
